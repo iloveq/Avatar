@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">ABmob</string>
+    <string name="main">MainActivity</string>
+    <string name="home">HomeActivity</string>
 </resources>
