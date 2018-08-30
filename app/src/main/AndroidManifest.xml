@@ -18,6 +18,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".HomeActivity"
+            android:process=":home"
             android:launchMode="singleTop"
             android:label="@string/home"/>
     </application>
