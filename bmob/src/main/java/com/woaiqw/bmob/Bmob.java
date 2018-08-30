@@ -11,7 +11,7 @@ import android.os.Bundle;
  */
 public class Bmob {
 
-    BroadcastReceiver receiver = new BroadcastReceiver() {
+    private BroadcastReceiver receiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             proxy.accept(intent.getExtras());
