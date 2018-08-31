@@ -8,5 +8,10 @@ interface IAvatarAidlInterface {
      * Demonstrates some basic types that you can use as parameters
      * and return values in AIDL.
      */
-    String post(String tag,String content);
+    void post(String tag,String content);
+
+    void register();
+
+    void unregister();
+
 }
