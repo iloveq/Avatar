@@ -40,6 +40,7 @@ public class Avatar {
      * @param content
      */
     public void post(final String tag, final String content) {
+        //TODO：aidl post 方法 传递进程信息 onBind 解析   mProcessName = ProcessUtil.getProcessName(context, ProcessUtil.getMyProcessId());
         app.bindService(new Intent(app, ShadowService.class), new ServiceConnection() {
             @Override
             public void onServiceConnected(ComponentName name, IBinder service) {
