@@ -1,4 +1,4 @@
-package com.woaiqw.abmob;
+package com.woaiqw.avatar;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -6,11 +6,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.TextView;
 
-import com.woaiqw.bmob.Bmob;
-import com.woaiqw.bmob.IReceiver;
+
 
 public class MainActivity extends AppCompatActivity {
-
     private static final String TAG = "MainActivity";
     private TextView tv;
 

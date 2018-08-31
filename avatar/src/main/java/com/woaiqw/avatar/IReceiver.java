@@ -1,4 +1,4 @@
-package com.woaiqw.bmob;
+package com.woaiqw.avatar;
 
 import android.os.Bundle;
 

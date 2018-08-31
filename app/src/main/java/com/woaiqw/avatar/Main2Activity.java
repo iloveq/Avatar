@@ -1,4 +1,4 @@
-package com.woaiqw.abmob;
+package com.woaiqw.avatar;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -6,11 +6,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.TextView;
 
-import com.woaiqw.bmob.Bmob;
-import com.woaiqw.bmob.IReceiver;
-import com.woaiqw.bmob.Subscribe;
-import com.woaiqw.bmob.Tag;
-import com.woaiqw.bmob.thread.ThreadMode;
+import com.woaiqw.avatar.Bmob;
+import com.woaiqw.avatar.IReceiver;
+import com.woaiqw.avatar.Subscribe;
+import com.woaiqw.avatar.Tag;
+import com.woaiqw.avatar.thread.ThreadMode;
 
 public class Main2Activity extends AppCompatActivity {
 

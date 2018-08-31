@@ -1,10 +1,10 @@
-package com.woaiqw.abmob;
+package com.woaiqw.avatar;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 
-import com.woaiqw.bmob.Bmob;
+import com.woaiqw.avatar.R;
 
 public class HomeActivity extends AppCompatActivity implements View.OnClickListener {
 

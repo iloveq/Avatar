@@ -1,4 +1,4 @@
-package com.woaiqw.abmob;
+package com.woaiqw.avatar;
 
 /**
  * Created by haoran on 2018/8/31.

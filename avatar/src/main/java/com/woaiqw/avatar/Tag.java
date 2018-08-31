@@ -1,4 +1,4 @@
-package com.woaiqw.bmob;
+package com.woaiqw.avatar;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

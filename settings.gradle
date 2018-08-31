@@ -1,1 +1,1 @@
-include ':app', ':bmob'
+include ':app', ':avatar'
