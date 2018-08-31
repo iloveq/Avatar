@@ -19,7 +19,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     public void onClick(View v) {
         Bundle bundle = new Bundle();
         bundle.putString("Home","change!!!");
-        Bmob.get().post(this,Constants.CHANGE,bundle);
+        Bmob.get().post(this,Constants.CHANGE_TEXT,bundle);
         finish();
     }
 }
