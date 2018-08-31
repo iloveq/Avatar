@@ -60,6 +60,51 @@ public class Avatar {
     }
 
     //TODO:Service 被GC,启动失败,异常处理
+    //ExceptionCallback
+
+    //@Register
+    public void register() {
+
+        app.bindService(new Intent(app, ShadowService.class), new ServiceConnection() {
+            @Override
+            public void onServiceConnected(ComponentName name, IBinder service) {
+                IAvatarAidlInterface.Stub stub = (IAvatarAidlInterface.Stub) service;
+                try {
+                    stub.register();
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onServiceDisconnected(ComponentName name) {
+
+            }
+        }, Context.BIND_AUTO_CREATE);
+
+    }
+
+    //@Register
+    public void unregister() {
+
+        app.bindService(new Intent(app, ShadowService.class), new ServiceConnection() {
+            @Override
+            public void onServiceConnected(ComponentName name, IBinder service) {
+                IAvatarAidlInterface.Stub stub = (IAvatarAidlInterface.Stub) service;
+                try {
+                    stub.unregister();
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onServiceDisconnected(ComponentName name) {
+
+            }
+        }, Context.BIND_AUTO_CREATE);
+
+    }
 
 
 }

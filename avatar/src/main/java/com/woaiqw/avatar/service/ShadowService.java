@@ -30,7 +30,6 @@ public class ShadowService extends Service {
         return stub;
     }
 
-
     @Override
     public void onCreate() {
         super.onCreate();
@@ -43,7 +42,6 @@ public class ShadowService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
         return START_STICKY;
     }
-
 
     @Override
     public boolean onUnbind(Intent intent) {
