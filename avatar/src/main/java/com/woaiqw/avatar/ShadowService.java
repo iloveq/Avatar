@@ -3,12 +3,15 @@ package com.woaiqw.avatar;
 import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
+import android.util.Log;
 
-import com.woaiqw.avatar.controller.RegisterFinder;
+import com.woaiqw.avatar.annotation.Subscribe;
 import com.woaiqw.avatar.model.PostCard;
 import com.woaiqw.avatar.model.SubscribeInfo;
 
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 
@@ -25,14 +28,15 @@ public class ShadowService extends Service {
 
     @Override
     public IBinder onBind(Intent intent) {
+        postMap = new LinkedHashMap<>(16, 0.75f, true);
+        subscribes = new HashMap<>();
         return stub;
     }
 
     @Override
     public void onCreate() {
         super.onCreate();
-        postMap = new LinkedHashMap<>(16, 0.75f, true);
-        subscribes = new HashMap<>();
+
     }
 
     @Override
@@ -61,7 +65,7 @@ public class ShadowService extends Service {
             PostCard postCard = postMap.get(tag);
             String eventObj = postCard.getEventObj();
             SubscribeInfo subscribeInfo = subscribes.get(tag);
-
+            Log.e("Avatar","subscribes.size:"+subscribes.size()+"--------"+"postMap.size:"+postMap.size());
             try {
                 subscribeInfo.getMethod().invoke(subscribeInfo.getSource(), eventObj);
             } catch (IllegalAccessException e) {
@@ -75,19 +79,65 @@ public class ShadowService extends Service {
         }
 
         @Override
-        public void register() {
-
-            subscribes.putAll(RegisterFinder.getSubscribes());
+        public void register(String className) {
+            processorSubscribes(className);
 
         }
 
         @Override
-        public void unregister() {
-            subscribes.remove("");
+        public void unregister(String className) {
+
 
         }
 
 
     };
+
+
+    public void processorSubscribes(String className) {
+        Object o = null;
+        try {
+            try {
+                o = Class.forName(className).newInstance();
+            } catch (InstantiationException e) {
+                e.printStackTrace();
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            }
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        if (o == null) {
+            return;
+        }
+        for (Method method : o.getClass().getDeclaredMethods()) {
+            if (method.isBridge()) {
+                continue;
+            }
+            if (method.isAnnotationPresent(Subscribe.class)) {
+                Class<?>[] parameterTypes = method.getParameterTypes();
+                if (parameterTypes.length != 1) {
+                    throw new IllegalArgumentException("Method " + method + " has @Subscribe annotation but requires "
+                            + parameterTypes.length + " arguments.  Methods must require a single argument.");
+                }
+                Class<?> parameterClazz = parameterTypes[0];
+                if (parameterClazz.isInterface()) {
+                    throw new IllegalArgumentException("Method " + method + " has @Subscribe annotation on " + parameterClazz
+                            + " which is an interface.  Subscription must be on a concrete class type.");
+                }
+                if ((method.getModifiers() & Modifier.PUBLIC) == 0) {
+                    throw new IllegalArgumentException("Method " + method + " has @Subscribe annotation on " + parameterClazz
+                            + " but is not 'public'.");
+                }
+                // create subscribes
+                Subscribe annotation = method.getAnnotation(Subscribe.class);
+                int thread = annotation.thread();
+                String tag = annotation.tag();
+                SubscribeInfo info = new SubscribeInfo(o, thread, method, parameterClazz);
+                subscribes.put(tag, info);
+            }
+        }
+    }
+
 
 }

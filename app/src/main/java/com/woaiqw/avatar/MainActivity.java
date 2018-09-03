@@ -1,6 +1,7 @@
 package com.woaiqw.avatar;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.TextView;
@@ -26,6 +27,11 @@ public class MainActivity extends AppCompatActivity {
     @Subscribe(thread = ThreadMode.BACKGROUND, tag = BusConstants.CHANGE_TEXT)
     public void changeText(String s) {
         tv.setText(s);
+    }
+
+    @Subscribe(thread = ThreadMode.BACKGROUND, tag = BusConstants.CHANGE_COLOR)
+    public void changeColor(String s) {
+        tv.setTextColor(Color.RED);
     }
 
     @Override

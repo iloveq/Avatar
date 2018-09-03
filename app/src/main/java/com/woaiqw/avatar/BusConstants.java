@@ -5,4 +5,5 @@ package com.woaiqw.avatar;
  */
 class BusConstants {
     public static final String CHANGE_TEXT = "change_text";
+    public static final String CHANGE_COLOR = "change_color";
 }

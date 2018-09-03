@@ -28,6 +28,7 @@ public class Main2Activity extends AppCompatActivity {
         tv.setText(s);
     }
 
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
