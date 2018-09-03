@@ -31,6 +31,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        Avatar.get().unregister();
+        Avatar.get().unregister(this);
     }
 }

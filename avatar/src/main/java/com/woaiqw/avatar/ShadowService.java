@@ -61,12 +61,15 @@ public class ShadowService extends Service {
             PostCard postCard = postMap.get(tag);
             String eventObj = postCard.getEventObj();
             SubscribeInfo subscribeInfo = subscribes.get(tag);
+
             try {
                 subscribeInfo.getMethod().invoke(subscribeInfo.getSource(), eventObj);
             } catch (IllegalAccessException e) {
-                e.printStackTrace();
+                throw new AssertionError(e);
             } catch (InvocationTargetException e) {
-                e.printStackTrace();
+                if (e.getCause() instanceof Error) {
+                    throw (Error) e.getCause();
+                }
             }
 
         }
@@ -80,7 +83,6 @@ public class ShadowService extends Service {
 
         @Override
         public void unregister() {
-
             subscribes.remove("");
 
         }

@@ -1,6 +1,5 @@
 package com.woaiqw.avatar;
 
-import android.app.Application;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -15,14 +14,11 @@ import com.woaiqw.avatar.controller.RegisterFinder;
  */
 public class Avatar {
 
-    private ShadowService service;
 
     private static volatile Avatar instance;
 
-    private static Context c;
 
     private Avatar() {
-        service = new ShadowService();
     }
 
     //初始化
@@ -33,22 +29,17 @@ public class Avatar {
         return instance;
     }
 
-    public static void setContext(Application app) {
-        c = app;
-    }
 
     /**
      * @param tag
      * @param content
      */
-    public void post(final String tag, final String content) {
-        //TODO：aidl post 方法 传递进程信息 onBind 解析   mProcessName = ProcessUtil.getProcessName(context, ProcessUtil.getMyProcessId());
+    public void post(Context c, final String tag, final String content) {
 
         c.bindService(new Intent(c, ShadowService.class), new ServiceConnection() {
-
             @Override
             public void onServiceConnected(ComponentName name, IBinder service) {
-                IAvatarAidlInterface.Stub stub = (IAvatarAidlInterface.Stub) service;
+                IAvatarAidlInterface stub = IAvatarAidlInterface.Stub.asInterface(service);
                 try {
                     stub.post(tag, content);
                 } catch (RemoteException e) {
@@ -61,55 +52,54 @@ public class Avatar {
 
             }
         }, Context.BIND_AUTO_CREATE);
+
     }
 
     //TODO:Service 被GC,启动失败,异常处理
     //ExceptionCallback
+
+    private ServiceConnection connection = new ServiceConnection() {
+        IAvatarAidlInterface stub;
+
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            stub = IAvatarAidlInterface.Stub.asInterface(service);
+            try {
+                stub.register();
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            try {
+                stub.unregister();
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        }
+    };
 
     //@Register
     public void register(Object o) {
 
         RegisterFinder.processorSubscribes(o);
 
-        c.bindService(new Intent(c, ShadowService.class), new ServiceConnection() {
-            @Override
-            public void onServiceConnected(ComponentName name, IBinder service) {
-                IAvatarAidlInterface.Stub stub = (IAvatarAidlInterface.Stub) service;
-                try {
-                    stub.register();
-                } catch (RemoteException e) {
-                    e.printStackTrace();
-                }
-            }
-
-            @Override
-            public void onServiceDisconnected(ComponentName name) {
-
-            }
-        }, Context.BIND_AUTO_CREATE);
+        if (o instanceof Context) {
+            Context c = (Context) o;
+            Intent intent = new Intent(c, ShadowService.class);
+            c.bindService(intent, connection, Context.BIND_AUTO_CREATE);
+        }
 
     }
 
     //@Register
-    public void unregister() {
-
-        c.bindService(new Intent(c, ShadowService.class), new ServiceConnection() {
-            @Override
-            public void onServiceConnected(ComponentName name, IBinder service) {
-                IAvatarAidlInterface.Stub stub = (IAvatarAidlInterface.Stub) service;
-                try {
-                    stub.unregister();
-                } catch (RemoteException e) {
-                    e.printStackTrace();
-                }
-            }
-
-            @Override
-            public void onServiceDisconnected(ComponentName name) {
-
-            }
-        }, Context.BIND_AUTO_CREATE);
-
+    public void unregister(final Object o) {
+        if (o instanceof Context) {
+            Context c = (Context) o;
+            c.unbindService(connection);
+        }
     }
 
 

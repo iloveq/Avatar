@@ -1,21 +1,36 @@
 package com.woaiqw.avatar.controller;
 
+import android.annotation.TargetApi;
+import android.os.Build;
+
 import com.woaiqw.avatar.annotation.Subscribe;
 import com.woaiqw.avatar.model.SubscribeInfo;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.HashMap;
+import java.util.Map;
+import java.util.function.BiConsumer;
 
 /**
  * Created by haoran on 2018/9/3.
  */
 public class RegisterFinder {
 
-    static HashMap<String, SubscribeInfo> map = new HashMap<>();
+    private static Map<String, SubscribeInfo> map = new HashMap<>();
 
-    public static HashMap<String, SubscribeInfo> getSubscribes() {
+    public static Map<String, SubscribeInfo> getSubscribes() {
         return map;
+    }
+
+    @TargetApi(Build.VERSION_CODES.N)
+    public static void remove(final Object o){
+       map.forEach(new BiConsumer<String, SubscribeInfo>() {
+           @Override
+           public void accept(String s, SubscribeInfo subscribeInfo) {
+               subscribeInfo.getSource().equals(o);
+           }
+       });
     }
 
     public static void processorSubscribes(Object o) {
