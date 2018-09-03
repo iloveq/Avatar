@@ -1,53 +1,50 @@
 package com.woaiqw.avatar.model;
 
+import java.lang.reflect.Method;
+
 /**
  * Created by haoran on 2018/8/31.
  */
 public class SubscribeInfo {
 
-    private int threadMode;
+    private final Object source;
 
-    private Class register;
+    private final int threadMode;
 
-    private Object eventObj;
+    private final Method method;
 
-    public SubscribeInfo(int threadMode, Class register, Object eventObj) {
+    private final Class<?> event;
+
+    public SubscribeInfo(Object source, int threadMode, Method method, Class<?> event) {
+        this.source = source;
         this.threadMode = threadMode;
-        this.register = register;
-        this.eventObj = eventObj;
+        this.method = method;
+        this.event = event;
+    }
+
+    public Object getSource() {
+        return source;
     }
 
     public int getThreadMode() {
         return threadMode;
     }
 
-    public void setThreadMode(int threadMode) {
-        this.threadMode = threadMode;
+    public Method getMethod() {
+        return method;
     }
 
-    public Class getRegister() {
-        return register;
+    public Class<?> getEvent() {
+        return event;
     }
-
-    public void setRegister(Class register) {
-        this.register = register;
-    }
-
-    public Object getEventObj() {
-        return eventObj;
-    }
-
-    public void setEventObj(Object eventObj) {
-        this.eventObj = eventObj;
-    }
-
 
     @Override
     public String toString() {
         return "SubscribeInfo{" +
-                "threadMode=" + threadMode +
-                ", register=" + register +
-                ", eventObj=" + eventObj +
+                "source=" + source +
+                ", threadMode=" + threadMode +
+                ", method=" + method +
+                ", event=" + event +
                 '}';
     }
 }

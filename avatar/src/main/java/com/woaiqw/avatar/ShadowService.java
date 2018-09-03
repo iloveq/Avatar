@@ -1,17 +1,16 @@
-package com.woaiqw.avatar.service;
+package com.woaiqw.avatar;
 
 import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
-import android.os.RemoteException;
 
-import com.woaiqw.avatar.IAvatarAidlInterface;
+import com.woaiqw.avatar.controller.RegisterFinder;
 import com.woaiqw.avatar.model.PostCard;
 import com.woaiqw.avatar.model.SubscribeInfo;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
-import java.util.List;
 
 /**
  * Created by haoran on 2018/8/31.
@@ -19,11 +18,10 @@ import java.util.List;
  */
 public class ShadowService extends Service {
 
-    //LruCache for post
+    // LruCache for post
     private LinkedHashMap<String, PostCard> postMap;
-
-    //Subscribes: key-tag value-SubscribeInfo
-    private HashMap<String, List<SubscribeInfo>> subscribes;
+    // Subscribes: key-register value-SubscribeInfo
+    private HashMap<String, SubscribeInfo> subscribes;
 
     @Override
     public IBinder onBind(Intent intent) {
@@ -35,7 +33,6 @@ public class ShadowService extends Service {
         super.onCreate();
         postMap = new LinkedHashMap<>(16, 0.75f, true);
         subscribes = new HashMap<>();
-        //TODO:编译时注解 初始化subscribes
     }
 
     @Override
@@ -56,30 +53,35 @@ public class ShadowService extends Service {
     IAvatarAidlInterface.Stub stub = new IAvatarAidlInterface.Stub() {
 
         @Override
-        public void post(String tag, String content) throws RemoteException {
-            //
-            postMap.put(tag, new PostCard(tag, content));
+        public void post(String tag, String content) {
+            if (postMap.get(tag) == null) {
+                postMap.put(tag, new PostCard(tag, content));
+            }
 
-            //TODO: 通过 tag 找到 subscribe
-
-            //TODO: 将 content 置入 SubscribeInfo 缓存起来
-
-            //TODO: 通过 SubscribeInfo 的 class 信息 匹配 register
-
-            //TODO; 调用 method.invoke(register) 方法 调用事件
-        }
-
-        @Override
-        public void register() throws RemoteException {
-
-            //TODO: 运行时注解添加 register 信息
+            PostCard postCard = postMap.get(tag);
+            String eventObj = postCard.getEventObj();
+            SubscribeInfo subscribeInfo = subscribes.get(tag);
+            try {
+                subscribeInfo.getMethod().invoke(subscribeInfo.getSource(), eventObj);
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            } catch (InvocationTargetException e) {
+                e.printStackTrace();
+            }
 
         }
 
         @Override
-        public void unregister() throws RemoteException {
+        public void register() {
 
-            //TODO: 运行时注解对事件解绑
+            subscribes.putAll(RegisterFinder.getSubscribes());
+
+        }
+
+        @Override
+        public void unregister() {
+
+            subscribes.remove("");
 
         }
 

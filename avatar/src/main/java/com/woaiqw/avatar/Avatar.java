@@ -1,4 +1,4 @@
-package com.woaiqw.avatar.main;
+package com.woaiqw.avatar;
 
 import android.app.Application;
 import android.content.ComponentName;
@@ -7,10 +7,8 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.IBinder;
 import android.os.RemoteException;
-import android.support.annotation.NonNull;
 
-import com.woaiqw.avatar.IAvatarAidlInterface;
-import com.woaiqw.avatar.service.ShadowService;
+import com.woaiqw.avatar.controller.RegisterFinder;
 
 /**
  * Created by haoran on 2018/8/31.
@@ -18,22 +16,26 @@ import com.woaiqw.avatar.service.ShadowService;
 public class Avatar {
 
     private ShadowService service;
-    private Application app;
+
     private static volatile Avatar instance;
 
-    private Avatar(Application app) {
-        this.app = app;
+    private static Context c;
+
+    private Avatar() {
         service = new ShadowService();
     }
 
     //初始化
-    public static synchronized Avatar getInstance(@NonNull Application context) {
+    public static synchronized Avatar get() {
         if (instance == null) {
-            instance = new Avatar(context);
+            instance = new Avatar();
         }
         return instance;
     }
 
+    public static void setContext(Application app) {
+        c = app;
+    }
 
     /**
      * @param tag
@@ -41,7 +43,9 @@ public class Avatar {
      */
     public void post(final String tag, final String content) {
         //TODO：aidl post 方法 传递进程信息 onBind 解析   mProcessName = ProcessUtil.getProcessName(context, ProcessUtil.getMyProcessId());
-        app.bindService(new Intent(app, ShadowService.class), new ServiceConnection() {
+
+        c.bindService(new Intent(c, ShadowService.class), new ServiceConnection() {
+
             @Override
             public void onServiceConnected(ComponentName name, IBinder service) {
                 IAvatarAidlInterface.Stub stub = (IAvatarAidlInterface.Stub) service;
@@ -63,9 +67,11 @@ public class Avatar {
     //ExceptionCallback
 
     //@Register
-    public void register() {
+    public void register(Object o) {
 
-        app.bindService(new Intent(app, ShadowService.class), new ServiceConnection() {
+        RegisterFinder.processorSubscribes(o);
+
+        c.bindService(new Intent(c, ShadowService.class), new ServiceConnection() {
             @Override
             public void onServiceConnected(ComponentName name, IBinder service) {
                 IAvatarAidlInterface.Stub stub = (IAvatarAidlInterface.Stub) service;
@@ -87,7 +93,7 @@ public class Avatar {
     //@Register
     public void unregister() {
 
-        app.bindService(new Intent(app, ShadowService.class), new ServiceConnection() {
+        c.bindService(new Intent(c, ShadowService.class), new ServiceConnection() {
             @Override
             public void onServiceConnected(ComponentName name, IBinder service) {
                 IAvatarAidlInterface.Stub stub = (IAvatarAidlInterface.Stub) service;

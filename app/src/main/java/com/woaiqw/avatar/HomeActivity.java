@@ -1,10 +1,8 @@
 package com.woaiqw.avatar;
 
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
-
-import com.woaiqw.avatar.R;
 
 public class HomeActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -17,9 +15,8 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onClick(View v) {
-        Bundle bundle = new Bundle();
-        bundle.putString("Home","change!!!");
-        Bmob.get().post(this,Constants.CHANGE_TEXT,bundle);
+
+        Avatar.get().post(BusConstants.CHANGE_TEXT, "AVATAR");
         finish();
     }
 }

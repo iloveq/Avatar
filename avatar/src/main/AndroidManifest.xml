@@ -6,7 +6,7 @@
         android:supportsRtl="true"
         android:vmSafeMode="true">
 
-        <service android:name=".service.ShadowService">
+        <service android:name=".ShadowService">
             <intent-filter>
                 <action android:name="com.woaiqw.avatar.IAvatarAidlInterface" />
             </intent-filter>
