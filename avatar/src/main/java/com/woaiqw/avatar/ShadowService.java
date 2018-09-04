@@ -89,19 +89,19 @@ public class ShadowService extends Service {
 
         @Override
         public void register(String className) {
-            processorSubscribes(className);
+            processorRegisterToSubscribesMap(className);
 
         }
 
         @Override
         public void unregister(String className) {
-            clearTargetRegister(className);
+            clearTargetRegisterInSubscribesMap(className);
         }
 
 
     };
 
-    private void clearTargetRegister(String className) {
+    private void clearTargetRegisterInSubscribesMap(String className) {
         if (TextUtils.isEmpty(className)) {
             return;
         }
@@ -113,7 +113,7 @@ public class ShadowService extends Service {
     }
 
 
-    public void processorSubscribes(String className) {
+    public void processorRegisterToSubscribesMap(String className) {
         Object o = null;
         try {
             try {

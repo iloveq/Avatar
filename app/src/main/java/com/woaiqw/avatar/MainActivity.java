@@ -34,6 +34,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void run() {
                 Log.e(TAG, s);
+                //tv.setText(s);
                 Log.e(TAG, "111");
             }
         });
