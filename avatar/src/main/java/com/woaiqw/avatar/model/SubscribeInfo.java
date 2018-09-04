@@ -7,7 +7,7 @@ import java.lang.reflect.Method;
  */
 public class SubscribeInfo {
 
-    private final Object source;
+    private final String tag;
 
     private final int threadMode;
 
@@ -15,15 +15,15 @@ public class SubscribeInfo {
 
     private final Class<?> event;
 
-    public SubscribeInfo(Object source, int threadMode, Method method, Class<?> event) {
-        this.source = source;
+    public SubscribeInfo(String tag, int threadMode, Method method, Class<?> event) {
+        this.tag = tag;
         this.threadMode = threadMode;
         this.method = method;
         this.event = event;
     }
 
-    public Object getSource() {
-        return source;
+    public String getTag() {
+        return tag;
     }
 
     public int getThreadMode() {
@@ -41,7 +41,7 @@ public class SubscribeInfo {
     @Override
     public String toString() {
         return "SubscribeInfo{" +
-                "source=" + source +
+                "tag=" + tag +
                 ", threadMode=" + threadMode +
                 ", method=" + method +
                 ", event=" + event +

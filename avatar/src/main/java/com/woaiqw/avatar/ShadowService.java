@@ -12,8 +12,11 @@ import com.woaiqw.avatar.model.SubscribeInfo;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Created by haoran on 2018/8/31.
@@ -24,7 +27,7 @@ public class ShadowService extends Service {
     // LruCache for post
     private LinkedHashMap<String, PostCard> postMap;
     // Subscribes: key-register value-SubscribeInfo
-    private HashMap<String, SubscribeInfo> subscribes;
+    private HashMap<Object, List<SubscribeInfo>> subscribes;
 
     @Override
     public IBinder onBind(Intent intent) {
@@ -64,15 +67,20 @@ public class ShadowService extends Service {
 
             PostCard postCard = postMap.get(tag);
             String eventObj = postCard.getEventObj();
-            SubscribeInfo subscribeInfo = subscribes.get(tag);
-            Log.e("Avatar","subscribes.size:"+subscribes.size()+"--------"+"postMap.size:"+postMap.size());
-            try {
-                subscribeInfo.getMethod().invoke(subscribeInfo.getSource(), eventObj);
-            } catch (IllegalAccessException e) {
-                throw new AssertionError(e);
-            } catch (InvocationTargetException e) {
-                if (e.getCause() instanceof Error) {
-                    throw (Error) e.getCause();
+
+            Log.e("Avatar", "subscribes.size:" + subscribes.size() + "--------" + "postMap.size:" + postMap.size());
+
+            for (Map.Entry<Object, List<SubscribeInfo>> entry : subscribes.entrySet()) {
+                for (SubscribeInfo info : entry.getValue()) {
+                    if (tag.equals(info.getTag())) {
+                        try {
+                            info.getMethod().invoke(entry.getKey(), eventObj);
+                        } catch (IllegalAccessException e) {
+                            e.printStackTrace();
+                        } catch (InvocationTargetException e) {
+                            e.printStackTrace();
+                        }
+                    }
                 }
             }
 
@@ -110,6 +118,7 @@ public class ShadowService extends Service {
         if (o == null) {
             return;
         }
+        List<SubscribeInfo> list = new ArrayList<>();
         for (Method method : o.getClass().getDeclaredMethods()) {
             if (method.isBridge()) {
                 continue;
@@ -133,10 +142,11 @@ public class ShadowService extends Service {
                 Subscribe annotation = method.getAnnotation(Subscribe.class);
                 int thread = annotation.thread();
                 String tag = annotation.tag();
-                SubscribeInfo info = new SubscribeInfo(o, thread, method, parameterClazz);
-                subscribes.put(tag, info);
+                SubscribeInfo info = new SubscribeInfo(tag, thread, method, parameterClazz);
+                list.add(info);
             }
         }
+        subscribes.put(o, list);
     }
 
 
