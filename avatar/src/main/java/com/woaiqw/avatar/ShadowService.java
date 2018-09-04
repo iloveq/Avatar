@@ -3,6 +3,7 @@ package com.woaiqw.avatar;
 import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
+import android.text.TextUtils;
 import android.util.Log;
 
 import com.woaiqw.avatar.annotation.Subscribe;
@@ -94,12 +95,22 @@ public class ShadowService extends Service {
 
         @Override
         public void unregister(String className) {
-
-
+            clearTargetRegister(className);
         }
 
 
     };
+
+    private void clearTargetRegister(String className) {
+        if (TextUtils.isEmpty(className)) {
+            return;
+        }
+        for (Map.Entry<Object, List<SubscribeInfo>> entry : subscribes.entrySet()) {
+            if (className.equals(entry.getKey().getClass().getName())) {
+                subscribes.remove(entry.getKey());
+            }
+        }
+    }
 
 
     public void processorSubscribes(String className) {
