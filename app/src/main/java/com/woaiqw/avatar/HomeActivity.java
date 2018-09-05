@@ -17,7 +17,8 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     public void onClick(View v) {
 
         Avatar.get().post(BusConstants.CHANGE_TEXT, "CHANGE_TEXT");
-        Avatar.get().post( BusConstants.CHANGE_COLOR, "CHANGE_COLOR");
+        Avatar.get().post(BusConstants.CHANGE_COLOR, "CHANGE_COLOR");
+
         finish();
 
     }

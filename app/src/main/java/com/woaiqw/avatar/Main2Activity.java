@@ -9,6 +9,8 @@ import android.widget.TextView;
 import com.woaiqw.avatar.annotation.Subscribe;
 import com.woaiqw.avatar.thread.ThreadMode;
 
+import org.greenrobot.eventbus.EventBus;
+
 public class Main2Activity extends AppCompatActivity {
 
     private static final String TAG = "Main2Activity";
@@ -20,22 +22,17 @@ public class Main2Activity extends AppCompatActivity {
         setContentView(R.layout.activity_main2);
         tv = findViewById(R.id.tv_name_2);
         Avatar.get().register(this);
+
         startActivity(new Intent(this, HomeActivity.class));
 
     }
 
 
-    @Subscribe(thread = ThreadMode.BACKGROUND, tag = BusConstants.CHANGE_TEXT)
+    @Subscribe(thread = ThreadMode.MAIN, tag = BusConstants.CHANGE_TEXT)
     public void changeText(String s) {
-
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                Log.e(TAG, s);
-                Log.e(TAG, "111");
-            }
-        });
-
+        Log.e(TAG, Thread.currentThread().getName() + "- - - - - - -" + s);
+        EventBus.getDefault().post(new MessageEvent("hhh"));
+        Log.e(TAG, Thread.currentThread().getName() + "- - - - - - -" + "end");
     }
 
 

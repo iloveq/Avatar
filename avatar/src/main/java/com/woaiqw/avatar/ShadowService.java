@@ -11,7 +11,6 @@ import com.woaiqw.avatar.model.PostCard;
 import com.woaiqw.avatar.model.SubscribeInfo;
 import com.woaiqw.avatar.thread.ThreadMode;
 
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
@@ -26,15 +25,19 @@ import java.util.Map;
  */
 public class ShadowService extends Service {
 
+
     // LruCache for post
     private LinkedHashMap<String, PostCard> postMap;
     // Subscribes: key-register value-SubscribeInfo
     private HashMap<Object, List<SubscribeInfo>> subscribes;
 
+    private Shadow s;
+
     @Override
     public IBinder onBind(Intent intent) {
         postMap = new LinkedHashMap<>(16, 0.75f, true);
         subscribes = new HashMap<>();
+        s = Shadow.getDefault();
         return stub;
     }
 
@@ -69,17 +72,38 @@ public class ShadowService extends Service {
 
             PostCard postCard = postMap.get(tag);
             String eventObj = postCard.getEventObj();
-
             Log.e("Avatar", "subscribes.size:" + subscribes.size() + "--------" + "postMap.size:" + postMap.size());
 
             for (Map.Entry<Object, List<SubscribeInfo>> entry : subscribes.entrySet()) {
                 for (SubscribeInfo info : entry.getValue()) {
                     if (tag.equals(info.getTag())) {
+                        info.setEvent(eventObj);
                         try {
-                            info.getMethod().invoke(entry.getKey(), eventObj);
-                        } catch (IllegalAccessException e) {
-                            e.printStackTrace();
-                        } catch (InvocationTargetException e) {
+                            switch (info.getThreadMode()) {
+                                case POSTING:
+                                    s.invokeSubscriber(info, entry.getKey());
+                                    break;
+                                case MAIN:
+                                    if (s.isMainThread()) {
+                                        s.invokeSubscriber(info, entry.getKey());
+                                    } else {
+                                        s.getMainThreadPoster().enqueue(info, entry.getKey());
+                                    }
+                                    break;
+                                case BACKGROUND:
+                                    if (s.isMainThread()) {
+                                        s.getBackgroundPoster().enqueue(info, entry.getKey());
+                                    } else {
+                                        s.invokeSubscriber(info, entry.getKey());
+                                    }
+                                    break;
+                                case ASYNC:
+                                    s.getAsyncPoster().enqueue(info, entry.getKey());
+                                    break;
+                                default:
+                                    throw new IllegalStateException("Unknown thread mode: " + info.getThreadMode());
+                            }
+                        } catch (Exception e) {
                             e.printStackTrace();
                         }
                     }
@@ -154,7 +178,7 @@ public class ShadowService extends Service {
                 Subscribe annotation = method.getAnnotation(Subscribe.class);
                 ThreadMode thread = annotation.thread();
                 String tag = annotation.tag();
-                SubscribeInfo info = new SubscribeInfo(tag, thread, method, parameterClazz);
+                SubscribeInfo info = new SubscribeInfo(tag, thread, method, parameterClazz.getName());
                 list.add(info);
             }
         }

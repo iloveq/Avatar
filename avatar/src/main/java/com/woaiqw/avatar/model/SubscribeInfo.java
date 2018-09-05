@@ -15,9 +15,9 @@ public class SubscribeInfo {
 
     private final Method method;
 
-    private final Class<?> event;
+    private String event;
 
-    public SubscribeInfo(String tag, ThreadMode threadMode, Method method, Class<?> event) {
+    public SubscribeInfo(String tag, ThreadMode threadMode, Method method, String event) {
         this.tag = tag;
         this.threadMode = threadMode;
         this.method = method;
@@ -36,7 +36,12 @@ public class SubscribeInfo {
         return method;
     }
 
-    public Class<?> getEvent() {
+    public void setEvent(String event) {
+        this.event = event;
+    }
+
+
+    public String getEvent() {
         return event;
     }
 

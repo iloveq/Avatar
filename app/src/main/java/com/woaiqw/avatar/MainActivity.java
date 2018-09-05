@@ -9,6 +9,8 @@ import android.widget.TextView;
 import com.woaiqw.avatar.annotation.Subscribe;
 import com.woaiqw.avatar.thread.ThreadMode;
 
+import org.greenrobot.eventbus.EventBus;
+
 
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
@@ -20,6 +22,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         tv = findViewById(R.id.tv_name);
         Avatar.get().register(this);
+        EventBus.getDefault().register(this);
         Intent intent = new Intent(this, Main2Activity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);
@@ -27,36 +30,30 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    @Subscribe(thread = ThreadMode.BACKGROUND, tag = BusConstants.CHANGE_TEXT)
+    @Subscribe(thread = ThreadMode.MAIN, tag = BusConstants.CHANGE_TEXT)
     public void changeText(String s) {
-
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                Log.e(TAG, s);
-                //tv.setText(s);
-                Log.e(TAG, "111");
-            }
-        });
-
+        Log.e(TAG, Thread.currentThread().getName() + "- - -" + s);
+        Log.e(TAG, Thread.currentThread().getName() + "- - - end");
     }
 
-    @Subscribe(thread = ThreadMode.BACKGROUND, tag = BusConstants.CHANGE_COLOR)
+    @Subscribe(thread = ThreadMode.MAIN, tag = BusConstants.CHANGE_COLOR)
     public void changeColor(String s) {
-
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                Log.e(TAG, s);
-            }
-        });
+        Log.e(TAG, Thread.currentThread().getName() + "- - -" + s);
+        Log.e(TAG, Thread.currentThread().getName() + "- - - end");
+    }
 
 
+    @org.greenrobot.eventbus.Subscribe(threadMode = org.greenrobot.eventbus.ThreadMode.MAIN)
+    public void onMessageEvent(MessageEvent event) {
+        Log.e("EventBus", Thread.currentThread().getName() + "- - -" + event.text);
+        tv.setText(event.text);
+        Log.e("EventBus", Thread.currentThread().getName() + "- - - end");
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        EventBus.getDefault().unregister(this);
         Avatar.get().unregister(this);
     }
 }
