@@ -9,6 +9,7 @@ import android.util.Log;
 import com.woaiqw.avatar.annotation.Subscribe;
 import com.woaiqw.avatar.model.PostCard;
 import com.woaiqw.avatar.model.SubscribeInfo;
+import com.woaiqw.avatar.thread.ThreadMode;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -151,7 +152,7 @@ public class ShadowService extends Service {
                 }
                 // create subscribes
                 Subscribe annotation = method.getAnnotation(Subscribe.class);
-                int thread = annotation.thread();
+                ThreadMode thread = annotation.thread();
                 String tag = annotation.tag();
                 SubscribeInfo info = new SubscribeInfo(tag, thread, method, parameterClazz);
                 list.add(info);
