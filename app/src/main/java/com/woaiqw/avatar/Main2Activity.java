@@ -30,6 +30,7 @@ public class Main2Activity extends AppCompatActivity {
 
     @Subscribe(thread = ThreadMode.MAIN, tag = BusConstants.CHANGE_TEXT)
     public void changeText(String s) {
+        //tv.setText(s);
         Log.e(TAG, Thread.currentThread().getName() + "- - - - - - -" + s);
         EventBus.getDefault().post(new MessageEvent("hhh"));
         Log.e(TAG, Thread.currentThread().getName() + "- - - - - - -" + "end");
