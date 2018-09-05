@@ -1,5 +1,7 @@
 package com.woaiqw.avatar.model;
 
+import com.woaiqw.avatar.thread.ThreadMode;
+
 import java.lang.reflect.Method;
 
 /**
@@ -9,13 +11,13 @@ public class SubscribeInfo {
 
     private final String tag;
 
-    private final int threadMode;
+    private final ThreadMode threadMode;
 
     private final Method method;
 
     private final Class<?> event;
 
-    public SubscribeInfo(String tag, int threadMode, Method method, Class<?> event) {
+    public SubscribeInfo(String tag, ThreadMode threadMode, Method method, Class<?> event) {
         this.tag = tag;
         this.threadMode = threadMode;
         this.method = method;
@@ -26,7 +28,7 @@ public class SubscribeInfo {
         return tag;
     }
 
-    public int getThreadMode() {
+    public ThreadMode getThreadMode() {
         return threadMode;
     }
 

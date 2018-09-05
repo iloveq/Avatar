@@ -19,6 +19,6 @@ public @interface Subscribe {
 
     String tag() default DEFAULT;
 
-    int thread() default ThreadMode.MAIN;
+    ThreadMode thread() default ThreadMode.MAIN;
 
 }

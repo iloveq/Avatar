@@ -1,31 +1,22 @@
 package com.woaiqw.avatar.thread;
 
-import android.support.annotation.IntDef;
 
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-
-import static com.woaiqw.avatar.thread.ThreadMode.ASYNC;
-import static com.woaiqw.avatar.thread.ThreadMode.BACKGROUND;
-import static com.woaiqw.avatar.thread.ThreadMode.MAIN;
-import static com.woaiqw.avatar.thread.ThreadMode.POSTING;
 
 /**
  * Created by haoran on 2018/8/31.
  */
-@Retention(RetentionPolicy.RUNTIME)
-@IntDef({POSTING, MAIN, BACKGROUND, ASYNC})
-public @interface ThreadMode {
 
-    int POSTING = 0x11;
+public enum ThreadMode {
 
-
-    int MAIN = 0x12;
+   POSTING,
 
 
-    int BACKGROUND = 0x13;
+    MAIN,
 
 
-    int ASYNC = 0x14;
+    BACKGROUND,
+
+
+    ASYNC
 
 }
