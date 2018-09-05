@@ -3,6 +3,7 @@ package com.woaiqw.avatar;
 import com.woaiqw.avatar.model.SubscribeInfo;
 import com.woaiqw.avatar.poster.AsyncPoster;
 import com.woaiqw.avatar.poster.BackgroundPoster;
+import com.woaiqw.avatar.poster.MainThreadSupport;
 import com.woaiqw.avatar.poster.Poster;
 
 import java.util.concurrent.ExecutorService;
@@ -21,7 +22,7 @@ public class Shadow {
     private final BackgroundPoster backgroundPoster;
     private final AsyncPoster asyncPoster;
 
-    private boolean isMainThread = true;
+    private final MainThreadSupport mainThreadSupport;
 
     private Shadow() {
         this(DEFAULT_BUILDER);
@@ -38,16 +39,16 @@ public class Shadow {
         return defaultInstance;
     }
 
-    Shadow(ShadowBuilder shadowBuilder) {
-        executorService = shadowBuilder.executorService;
-        mainThreadPoster = shadowBuilder.mainThreadSupport != null ?shadowBuilder. mainThreadSupport.createPoster(this) : null;
-        isMainThread = shadowBuilder.isMainThread();
+    Shadow(ShadowBuilder builder) {
+        executorService = builder.executorService;
+        mainThreadSupport = builder.getMainThreadSupport();
+        mainThreadPoster = mainThreadSupport != null ?mainThreadSupport.createPoster(this) : null;
         backgroundPoster = new BackgroundPoster(this);
         asyncPoster = new AsyncPoster(this);
     }
 
     public boolean isMainThread() {
-        return isMainThread;
+        return mainThreadSupport == null || mainThreadSupport.isMainThread();
     }
 
     public void invokeSubscriber(PendingPost pendingPost) {

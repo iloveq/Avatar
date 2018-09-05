@@ -43,14 +43,6 @@ public class ShadowBuilder {
         }
     }
 
-    public boolean isMainThread() {
-        return mainThreadSupport != null ? mainThreadSupport.isMainThread() : true;
-    }
-
-
-    /**
-     * Builds an EventBus based on the current configuration.
-     */
     public Shadow build() {
         return new Shadow(this);
     }
