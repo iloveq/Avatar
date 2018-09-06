@@ -21,7 +21,7 @@ public class AsyncPoster implements Runnable, Poster {
         queue = new PendingPostQueue();
     }
 
-    public void enqueue(SubscribeInfo subscribeInfo, Object event) {
+    public void enqueue(SubscribeInfo subscribeInfo, String event) {
         PendingPost pendingPost = PendingPost.obtainPendingPost(subscribeInfo, event);
         queue.enqueue(pendingPost);
         s.getExecutorService().execute(this);

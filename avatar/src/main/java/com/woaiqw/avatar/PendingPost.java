@@ -23,16 +23,16 @@ import java.util.List;
 public final class PendingPost {
     private final static List<PendingPost> pendingPostPool = new ArrayList<PendingPost>();
 
-    Object source;
+    String source;
     SubscribeInfo subscribeInfo;
     PendingPost next;
 
-    private PendingPost(Object source, SubscribeInfo subscribeInfo) {
+    private PendingPost(String source, SubscribeInfo subscribeInfo) {
         this.source = source;
         this.subscribeInfo = subscribeInfo;
     }
 
-    public static PendingPost obtainPendingPost(SubscribeInfo subscribeInfo, Object source) {
+    public static PendingPost obtainPendingPost(SubscribeInfo subscribeInfo, String source) {
         synchronized (pendingPostPool) {
             int size = pendingPostPool.size();
             if (size > 0) {

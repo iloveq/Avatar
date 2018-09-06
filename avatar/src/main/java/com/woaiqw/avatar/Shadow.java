@@ -1,10 +1,13 @@
 package com.woaiqw.avatar;
 
+import android.util.Log;
+
 import com.woaiqw.avatar.model.SubscribeInfo;
 import com.woaiqw.avatar.poster.AsyncPoster;
 import com.woaiqw.avatar.poster.BackgroundPoster;
 import com.woaiqw.avatar.poster.MainThreadSupport;
 import com.woaiqw.avatar.poster.Poster;
+import com.woaiqw.avatar.utils.ProcessUtil;
 
 import java.util.concurrent.ExecutorService;
 
@@ -13,6 +16,7 @@ import java.util.concurrent.ExecutorService;
  */
 public class Shadow {
 
+    private static final String TAG = "Shadow";
 
     private static final ShadowBuilder DEFAULT_BUILDER = new ShadowBuilder();
     private static volatile Shadow defaultInstance;
@@ -52,7 +56,7 @@ public class Shadow {
     }
 
     public void invokeSubscriber(PendingPost pendingPost) {
-        Object source = pendingPost.source;
+        String source = pendingPost.source;
         SubscribeInfo subscribeInfo = pendingPost.subscribeInfo;
         PendingPost.releasePendingPost(pendingPost);
 
@@ -60,10 +64,16 @@ public class Shadow {
 
     }
 
-    void invokeSubscriber(SubscribeInfo subscribeInfo, Object source) {
+    void invokeSubscriber(SubscribeInfo subscribeInfo, String source) {
+
         try {
-            subscribeInfo.getMethod().invoke(source, subscribeInfo.getEvent());
+            Object o = Avatar.getSourceCache().get(source);
+            if (o == null){
+                return;
+            }
+            subscribeInfo.getMethod().invoke(o, subscribeInfo.getEvent());
         } catch (Exception e) {
+            Log.e(TAG,e.toString());
             throw new RuntimeException(e);
         }
     }

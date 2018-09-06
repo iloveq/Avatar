@@ -29,7 +29,7 @@ public class ShadowService extends Service {
     // LruCache for post
     private LinkedHashMap<String, PostCard> postMap;
     // Subscribes: key-register value-SubscribeInfo
-    private HashMap<Object, List<SubscribeInfo>> subscribes;
+    private HashMap<String, List<SubscribeInfo>> subscribes;
 
     private Shadow s;
 
@@ -73,8 +73,7 @@ public class ShadowService extends Service {
             PostCard postCard = postMap.get(tag);
             String eventObj = postCard.getEventObj();
             Log.e("Avatar", "subscribes.size:" + subscribes.size() + "--------" + "postMap.size:" + postMap.size());
-
-            for (Map.Entry<Object, List<SubscribeInfo>> entry : subscribes.entrySet()) {
+            for (Map.Entry<String, List<SubscribeInfo>> entry : subscribes.entrySet()) {
                 for (SubscribeInfo info : entry.getValue()) {
                     if (tag.equals(info.getTag())) {
                         info.setEvent(eventObj);
@@ -109,7 +108,6 @@ public class ShadowService extends Service {
                     }
                 }
             }
-
         }
 
         @Override
@@ -130,7 +128,7 @@ public class ShadowService extends Service {
         if (TextUtils.isEmpty(className)) {
             return;
         }
-        for (Map.Entry<Object, List<SubscribeInfo>> entry : subscribes.entrySet()) {
+        for (Map.Entry<String, List<SubscribeInfo>> entry : subscribes.entrySet()) {
             if (className.equals(entry.getKey().getClass().getName())) {
                 subscribes.remove(entry.getKey());
             }
@@ -140,15 +138,10 @@ public class ShadowService extends Service {
 
     public void processorRegisterToSubscribesMap(String className) {
         Object o = null;
+
         try {
-            try {
-                o = Class.forName(className).newInstance();
-            } catch (InstantiationException e) {
-                e.printStackTrace();
-            } catch (IllegalAccessException e) {
-                e.printStackTrace();
-            }
-        } catch (ClassNotFoundException e) {
+            o = Class.forName(className).newInstance();
+        } catch (Exception e) {
             e.printStackTrace();
         }
         if (o == null) {
@@ -182,7 +175,7 @@ public class ShadowService extends Service {
                 list.add(info);
             }
         }
-        subscribes.put(o, list);
+        subscribes.put(className, list);
     }
 
 

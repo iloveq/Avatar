@@ -10,6 +10,7 @@ import android.os.RemoteException;
 
 import com.woaiqw.avatar.utils.ProcessUtil;
 
+import java.util.HashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
@@ -19,11 +20,15 @@ public class Avatar {
 
 
     private static Avatar sInstance;
-    private static Context appContext;
+    public static Context appContext;
     private static AtomicBoolean initFlag = new AtomicBoolean(false);
     private static boolean isMainProcess = false;
-
+    private static HashMap<String,Object> sourceCache = new HashMap<>();
     private Connection con;
+
+    public static HashMap<String, Object> getSourceCache() {
+        return sourceCache;
+    }
 
     public static void init(Application context) {
         if (initFlag.get() || context == null) {
@@ -44,6 +49,8 @@ public class Avatar {
         }
         return sInstance;
     }
+
+
 
     /**** outer method ******************************************************************************************************/
 
@@ -78,6 +85,7 @@ public class Avatar {
 
         try {
             final String name = o.getClass().getName();
+            sourceCache.put(name,o);
             if (con == null) {
                 register(name);
             } else {
@@ -97,8 +105,11 @@ public class Avatar {
 
     //@Register
     public void unregister(final Object o) {
+
+
         try {
             final String name = o.getClass().getName();
+            sourceCache.remove(name);
             if (con == null) {
                 unregister(name);
             } else {

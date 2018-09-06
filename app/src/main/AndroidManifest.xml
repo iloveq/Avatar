@@ -26,10 +26,6 @@
             android:label="@string/home"
             android:launchMode="singleTop"
             android:process=":home" />
-        <activity android:name=".Main2Activity"
-            android:label="@string/main2"
-            android:launchMode="singleTop"
-            />
     </application>
 
 </manifest>

@@ -4,6 +4,8 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 
+import org.greenrobot.eventbus.EventBus;
+
 public class HomeActivity extends AppCompatActivity implements View.OnClickListener {
 
     @Override
@@ -16,8 +18,9 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onClick(View v) {
 
-        Avatar.get().post(BusConstants.CHANGE_TEXT, "CHANGE_TEXT");
-        Avatar.get().post(BusConstants.CHANGE_COLOR, "CHANGE_COLOR");
+        EventBus.getDefault().post(new MessageEvent("改变背景颜色"));
+        Avatar.get().post(BusConstants.CHANGE_TEXT, "我是：MainActivity");
+        Avatar.get().post( BusConstants.CHANGE_COLOR, "#FF0000");
 
         finish();
 

@@ -37,7 +37,7 @@ public final class BackgroundPoster implements Runnable, Poster {
         queue = new PendingPostQueue();
     }
 
-    public void enqueue(SubscribeInfo subscribeInfo, Object source) {
+    public void enqueue(SubscribeInfo subscribeInfo, String source) {
         PendingPost pendingPost = PendingPost.obtainPendingPost(subscribeInfo, source);
         synchronized (this) {
             queue.enqueue(pendingPost);

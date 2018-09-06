@@ -1,6 +1,7 @@
 package com.woaiqw.avatar;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -23,31 +24,27 @@ public class MainActivity extends AppCompatActivity {
         tv = findViewById(R.id.tv_name);
         Avatar.get().register(this);
         EventBus.getDefault().register(this);
-        Intent intent = new Intent(this, Main2Activity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        startActivity(intent);
-        //startActivity(new Intent(this, HomeActivity.class));
+        tv.setOnClickListener(v -> startActivity(new Intent(MainActivity.this, HomeActivity.class)));
 
     }
 
     @Subscribe(thread = ThreadMode.MAIN, tag = BusConstants.CHANGE_TEXT)
     public void changeText(String s) {
-        Log.e(TAG, Thread.currentThread().getName() + "- - -" + s);
-        Log.e(TAG, Thread.currentThread().getName() + "- - - end");
+        Log.e(TAG, s);
+        tv.setText(s);
     }
 
     @Subscribe(thread = ThreadMode.MAIN, tag = BusConstants.CHANGE_COLOR)
     public void changeColor(String s) {
-        Log.e(TAG, Thread.currentThread().getName() + "- - -" + s);
-        Log.e(TAG, Thread.currentThread().getName() + "- - - end");
+        Log.e(TAG, s);
+        tv.setTextColor(Color.parseColor(s));
     }
 
 
     @org.greenrobot.eventbus.Subscribe(threadMode = org.greenrobot.eventbus.ThreadMode.MAIN)
     public void onMessageEvent(MessageEvent event) {
         Log.e("EventBus", Thread.currentThread().getName() + "- - -" + event.text);
-        tv.setText(event.text);
-        Log.e("EventBus", Thread.currentThread().getName() + "- - - end");
+        tv.setBackgroundColor(Color.YELLOW);
     }
 
     @Override
