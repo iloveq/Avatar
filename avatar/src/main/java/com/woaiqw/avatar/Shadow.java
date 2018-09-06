@@ -7,7 +7,6 @@ import com.woaiqw.avatar.poster.AsyncPoster;
 import com.woaiqw.avatar.poster.BackgroundPoster;
 import com.woaiqw.avatar.poster.MainThreadSupport;
 import com.woaiqw.avatar.poster.Poster;
-import com.woaiqw.avatar.utils.ProcessUtil;
 
 import java.util.concurrent.ExecutorService;
 
@@ -46,7 +45,7 @@ public class Shadow {
     Shadow(ShadowBuilder builder) {
         executorService = builder.executorService;
         mainThreadSupport = builder.getMainThreadSupport();
-        mainThreadPoster = mainThreadSupport != null ?mainThreadSupport.createPoster(this) : null;
+        mainThreadPoster = mainThreadSupport != null ? mainThreadSupport.createPoster(this) : null;
         backgroundPoster = new BackgroundPoster(this);
         asyncPoster = new AsyncPoster(this);
     }
@@ -68,17 +67,15 @@ public class Shadow {
 
         try {
             Object o = Avatar.getSourceCache().get(source);
-            if (o == null){
+            if (o == null) {
                 return;
             }
             subscribeInfo.getMethod().invoke(o, subscribeInfo.getEvent());
         } catch (Exception e) {
-            Log.e(TAG,e.toString());
+            Log.e(TAG, e.toString());
             throw new RuntimeException(e);
         }
     }
-
-
 
 
     public ExecutorService getExecutorService() {
