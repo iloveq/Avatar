@@ -4,11 +4,10 @@ package com.woaiqw.avatar.poster;
 import com.woaiqw.avatar.PendingPost;
 import com.woaiqw.avatar.PendingPostQueue;
 import com.woaiqw.avatar.Shadow;
-import com.woaiqw.avatar.model.SubscribeInfo;
 
 /**
  * Posts events in background.
- * 
+ *
  * @author Markus
  */
 public class AsyncPoster implements Runnable, Poster {
@@ -21,7 +20,7 @@ public class AsyncPoster implements Runnable, Poster {
         queue = new PendingPostQueue();
     }
 
-    public void enqueue(SubscribeInfo subscribeInfo, String event) {
+    public void enqueue(String subscribeInfo, String event) {
         PendingPost pendingPost = PendingPost.obtainPendingPost(subscribeInfo, event);
         queue.enqueue(pendingPost);
         s.getExecutorService().execute(this);
@@ -30,7 +29,7 @@ public class AsyncPoster implements Runnable, Poster {
     @Override
     public void run() {
         PendingPost pendingPost = queue.poll();
-        if(pendingPost == null) {
+        if (pendingPost == null) {
             throw new IllegalStateException("No pending post available");
         }
         s.invokeSubscriber(pendingPost);

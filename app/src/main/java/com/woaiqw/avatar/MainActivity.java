@@ -8,7 +8,6 @@ import android.util.Log;
 import android.widget.TextView;
 
 import com.woaiqw.avatar.annotation.Subscribe;
-import com.woaiqw.avatar.thread.ThreadMode;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -28,13 +27,13 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    @Subscribe(thread = ThreadMode.MAIN, tag = BusConstants.CHANGE_TEXT)
+    @Subscribe(tag = BusConstants.CHANGE_TEXT)
     public void changeText(String s) {
         Log.e(TAG, s);
         tv.setText(s);
     }
 
-    @Subscribe(thread = ThreadMode.MAIN, tag = BusConstants.CHANGE_COLOR)
+    @Subscribe(tag = BusConstants.CHANGE_COLOR)
     public void changeColor(String s) {
         Log.e(TAG, s);
         tv.setTextColor(Color.parseColor(s));

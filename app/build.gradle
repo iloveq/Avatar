@@ -29,4 +29,5 @@ dependencies {
     implementation project(':avatar')
     implementation 'com.android.support:multidex:1.0.3'
     implementation 'org.greenrobot:eventbus:3.1.1'
+    implementation 'com.android.support.constraint:constraint-layout:1.1.3'
 }

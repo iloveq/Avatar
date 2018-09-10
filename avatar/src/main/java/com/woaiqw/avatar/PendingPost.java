@@ -1,38 +1,21 @@
-/*
- * Copyright (C) 2012-2016 Markus Junginger, greenrobot (http://greenrobot.org)
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package com.woaiqw.avatar;
-
-import com.woaiqw.avatar.model.SubscribeInfo;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public final class PendingPost {
-    private final static List<PendingPost> pendingPostPool = new ArrayList<PendingPost>();
+    private final static List<PendingPost> pendingPostPool = new ArrayList<>();
 
     String source;
-    SubscribeInfo subscribeInfo;
+    String subscribeInfo;
     PendingPost next;
 
-    private PendingPost(String source, SubscribeInfo subscribeInfo) {
+    private PendingPost(String source, String subscribeInfo) {
         this.source = source;
         this.subscribeInfo = subscribeInfo;
     }
 
-    public static PendingPost obtainPendingPost(SubscribeInfo subscribeInfo, String source) {
+    public static PendingPost obtainPendingPost(String subscribeInfo, String source) {
         synchronized (pendingPostPool) {
             int size = pendingPostPool.size();
             if (size > 0) {

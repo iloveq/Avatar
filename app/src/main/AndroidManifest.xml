@@ -4,17 +4,18 @@
     package="com.woaiqw.avatar">
 
     <application
+        android:name=".App"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
-        tools:replace="android:label"
         android:label="@string/app_name"
-        android:name=".App"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
+        android:theme="@style/AppTheme"
+        tools:replace="android:label">
         <activity
             android:name=".MainActivity"
-            android:label="@string/main">
+            android:label="@string/main"
+            android:process=":main">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -24,8 +25,8 @@
         <activity
             android:name=".HomeActivity"
             android:label="@string/home"
-            android:launchMode="singleTop"
-            android:process=":home" />
+
+            android:launchMode="singleTop" />
     </application>
 
 </manifest>

@@ -1,13 +1,14 @@
 package com.woaiqw.avatar;
 
+import android.content.Intent;
 import android.util.Log;
 
-import com.woaiqw.avatar.model.SubscribeInfo;
 import com.woaiqw.avatar.poster.AsyncPoster;
 import com.woaiqw.avatar.poster.BackgroundPoster;
 import com.woaiqw.avatar.poster.MainThreadSupport;
 import com.woaiqw.avatar.poster.Poster;
 
+import java.lang.reflect.Method;
 import java.util.concurrent.ExecutorService;
 
 /**
@@ -56,21 +57,31 @@ public class Shadow {
 
     public void invokeSubscriber(PendingPost pendingPost) {
         String source = pendingPost.source;
-        SubscribeInfo subscribeInfo = pendingPost.subscribeInfo;
+        String subscribeInfo = pendingPost.subscribeInfo;
         PendingPost.releasePendingPost(pendingPost);
 
         invokeSubscriber(subscribeInfo, source);
 
     }
 
-    void invokeSubscriber(SubscribeInfo subscribeInfo, String source) {
-
+    void invokeSubscriber(String subscribeInfo, String source) {
+        String[] info = subscribeInfo.split("\\.");
         try {
-            Object o = Avatar.getSourceCache().get(source);
+            Object o = Avatar.get().getSourceCache().get(source);
             if (o == null) {
+                Log.e(TAG, "register is null");
+                Intent intent = new Intent();
+                intent.setAction("POST");
+                intent.putExtra("source", source);
+                intent.putExtra("info", subscribeInfo);
+                Avatar.appContext.sendBroadcast(intent);
                 return;
             }
-            subscribeInfo.getMethod().invoke(o, subscribeInfo.getEvent());
+            Log.e(TAG, o.toString());
+            Method method = o.getClass().getDeclaredMethod(info[0], String.class);
+            Log.e(TAG, "create method");
+            method.invoke(o, info[3]);
+            Log.e(TAG, "method.invoke");
         } catch (Exception e) {
             Log.e(TAG, e.toString());
             throw new RuntimeException(e);

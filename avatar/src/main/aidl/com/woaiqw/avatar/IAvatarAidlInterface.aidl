@@ -10,7 +10,7 @@ interface IAvatarAidlInterface {
      */
     void post(String tag,String content);
 
-    void register(String className);
+    void register(String className,String subscribe);
 
     void unregister(String className);
 

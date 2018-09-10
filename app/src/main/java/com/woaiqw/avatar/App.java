@@ -18,4 +18,11 @@ public class App extends Application {
         MultiDex.install(this);
     }
 
+    @Override
+
+    public void onTerminate() {
+        super.onTerminate();
+        Avatar.recycleSource();
+    }
+
 }

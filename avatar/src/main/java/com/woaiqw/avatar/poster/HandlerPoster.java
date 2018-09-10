@@ -8,7 +8,6 @@ import android.os.SystemClock;
 import com.woaiqw.avatar.PendingPost;
 import com.woaiqw.avatar.PendingPostQueue;
 import com.woaiqw.avatar.Shadow;
-import com.woaiqw.avatar.model.SubscribeInfo;
 
 public class HandlerPoster extends Handler implements Poster {
 
@@ -24,7 +23,7 @@ public class HandlerPoster extends Handler implements Poster {
         queue = new PendingPostQueue();
     }
 
-    public void enqueue(SubscribeInfo subscription, String source) {
+    public void enqueue(String subscription, String source) {
         PendingPost pendingPost = PendingPost.obtainPendingPost(subscription, source);
         synchronized (this) {
             queue.enqueue(pendingPost);

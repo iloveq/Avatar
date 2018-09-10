@@ -1,15 +1,23 @@
 package com.woaiqw.avatar;
 
 import android.app.Application;
+import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.os.IBinder;
 import android.os.RemoteException;
+import android.text.TextUtils;
+import android.util.Log;
 
+import com.woaiqw.avatar.annotation.Subscribe;
+import com.woaiqw.avatar.thread.ThreadMode;
 import com.woaiqw.avatar.utils.ProcessUtil;
 
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.HashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -23,10 +31,35 @@ public class Avatar {
     public static Context appContext;
     private static AtomicBoolean initFlag = new AtomicBoolean(false);
     private static boolean isMainProcess = false;
-    private static HashMap<String,Object> sourceCache = new HashMap<>();
+    private static HashMap<String, Object> sourceCache = new HashMap<>();
     private Connection con;
+    private static BroadcastReceiver b = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String source = intent.getStringExtra("source");
+            String subscribeInfo = intent.getStringExtra("info");
+            if (!TextUtils.isEmpty(source) && !TextUtils.isEmpty(subscribeInfo)) {
+                String[] info = subscribeInfo.split("\\.");
+                try {
+                    Object o = sourceCache.get(source);
+                    if (o == null) {
+                        Log.e("Shadow", "register == null");
+                        return;
+                    }
+                    Log.e("Shadow", o.toString());
+                    Method method = o.getClass().getDeclaredMethod(info[0], String.class);
+                    Log.e("Shadow", "create method");
+                    method.invoke(o, info[3]);
+                    Log.e("Shadow", "method.invoke");
+                } catch (Exception e) {
+                    Log.e("Shadow", e.toString());
+                    throw new RuntimeException(e);
+                }
+            }
+        }
+    };
 
-    public static HashMap<String, Object> getSourceCache() {
+    public HashMap<String, Object> getSourceCache() {
         return sourceCache;
     }
 
@@ -34,7 +67,10 @@ public class Avatar {
         if (initFlag.get() || context == null) {
             return;
         }
-        appContext = context;
+        appContext = context.getApplicationContext();
+        IntentFilter filter = new IntentFilter();
+        filter.addAction("POST");
+        appContext.registerReceiver(b, filter);
         isMainProcess = ProcessUtil.isMainProcess(context);
         initFlag.set(true);
     }
@@ -50,6 +86,11 @@ public class Avatar {
         return sInstance;
     }
 
+    public static void recycleSource() {
+        appContext.unregisterReceiver(b);
+        appContext = null;
+        sourceCache.clear();
+    }
 
 
     /**** outer method ******************************************************************************************************/
@@ -83,14 +124,20 @@ public class Avatar {
     //@Register
     public void register(final Object o) {
 
+        if (!initFlag.get()) {
+            return;
+        }
+
         try {
             final String name = o.getClass().getName();
-            sourceCache.put(name,o);
+            sourceCache.put(name, o);
+            String registerInfo = processorAnnotation(o);
+            Log.e("AVATAR:", registerInfo);
             if (con == null) {
-                register(name);
+                register(name, registerInfo);
             } else {
                 if (con.getStub() != null) {
-                    con.getStub().register(name);
+                    con.getStub().register(name, registerInfo);
                 } else {
                     unregister(name);
                 }
@@ -106,6 +153,9 @@ public class Avatar {
     //@Register
     public void unregister(final Object o) {
 
+        if (!initFlag.get()) {
+            return;
+        }
 
         try {
             final String name = o.getClass().getName();
@@ -129,6 +179,11 @@ public class Avatar {
     /**** interval ******************************************************************************************************/
 
     private void postInterval(final String tag, final String content) {
+
+        if (appContext == null) {
+            return;
+        }
+
         appContext.bindService(new Intent(appContext, ShadowService.class), con = new Connection(new ConnectionCallback() {
             @Override
             public void onConnected(IAvatarAidlInterface stub) throws RemoteException {
@@ -142,11 +197,16 @@ public class Avatar {
         }), Context.BIND_AUTO_CREATE);
     }
 
-    private void register(final String name) {
+    private void register(final String name, final String subscribes) {
+
+        if (appContext == null) {
+            return;
+        }
+
         appContext.bindService(new Intent(appContext, ShadowService.class), con = new Connection(new ConnectionCallback() {
             @Override
             public void onConnected(IAvatarAidlInterface stub) throws RemoteException {
-                stub.register(name);
+                stub.register(name, subscribes);
             }
 
             @Override
@@ -157,6 +217,11 @@ public class Avatar {
     }
 
     private void unregister(final String name) {
+
+        if (appContext == null) {
+            return;
+        }
+
         appContext.bindService(new Intent(appContext, ShadowService.class), con = new Connection(new ConnectionCallback() {
             @Override
             public void onConnected(IAvatarAidlInterface stub) throws RemoteException {
@@ -169,6 +234,7 @@ public class Avatar {
             }
         }), Context.BIND_AUTO_CREATE);
     }
+
 
     /******* inner define ***************************************************************************************************/
 
@@ -209,5 +275,41 @@ public class Avatar {
         }
     }
 
+
+    /******* utils ***************************************************************************************************/
+
+    private String processorAnnotation(Object o) {
+
+        StringBuilder s = new StringBuilder();
+        for (Method method : o.getClass().getDeclaredMethods()) {
+            if (method.isBridge()) {
+                continue;
+            }
+            if (method.isAnnotationPresent(Subscribe.class)) {
+                Class<?>[] parameterTypes = method.getParameterTypes();
+                if (parameterTypes.length != 1) {
+                    throw new IllegalArgumentException("Method " + method + " has @Subscribe annotation but requires "
+                            + parameterTypes.length + " arguments.  Methods must require a single argument.");
+                }
+                Class<?> parameterClazz = parameterTypes[0];
+                if (parameterClazz.isInterface()) {
+                    throw new IllegalArgumentException("Method " + method + " has @Subscribe annotation on " + parameterClazz
+                            + " which is an interface.  Subscription must be on a concrete class type.");
+                }
+                if ((method.getModifiers() & Modifier.PUBLIC) == 0) {
+                    throw new IllegalArgumentException("Method " + method + " has @Subscribe annotation on " + parameterClazz
+                            + " but is not 'public'.");
+                }
+                // create subscribes
+                Subscribe annotation = method.getAnnotation(Subscribe.class);
+                ThreadMode thread = annotation.thread();
+                String tag = annotation.tag();
+                //methodName.tag.threadName.content$
+                s.append(method.getName()).append(".").append(tag).append(".").append(thread.name()).append(".").append("avatar").append("$");
+
+            }
+        }
+        return s.toString();
+    }
 
 }
