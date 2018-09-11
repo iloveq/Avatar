@@ -29,7 +29,7 @@ Add it in your root build.gradle at the end of repositories:
 	}
 
 ```
-**Step 3.每个进程初始化 context 上下文，通过上下文来启动service
+**Step 3.** 每个进程初始化 context 上下文，通过上下文来启动service
 ```
 public class App extends Application {
 
@@ -46,7 +46,7 @@ public class App extends Application {
 
 }
 ```
-**Step 4.事件发布 home进程：HomeActivity
+**Step 4.** 事件发布 home进程：HomeActivity
 和EventBus对比，EventBus是不能跨进程的
 ```
 public class HomeActivity extends AppCompatActivity implements View.OnClickListener {
@@ -67,7 +67,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     }
 }
 ```
-**Step 5. 主进程：MainActivity 订阅事件
+**Step 5.** 主进程：MainActivity 订阅事件
 ```
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
