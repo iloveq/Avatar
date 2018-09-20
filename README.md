@@ -25,7 +25,7 @@ Add it in your root build.gradle at the end of repositories:
 **Step 2.** Add the dependency
 ```
 	dependencies {
-	        implementation 'com.github.woaigmz:Avatar:0.0.1'
+	        implementation 'com.github.woaigmz:Avatar:0.0.4'
 	}
 
 ```
@@ -43,6 +43,12 @@ public class App extends Application {
         }
         //初始化主进程库
     }
+
+     @Override
+        public void onTerminate() {
+            super.onTerminate();
+            Avatar.recycleSource();
+        }
 
 }
 ```
