@@ -67,7 +67,7 @@ public class Shadow {
     void invokeSubscriber(String subscribeInfo, String source) {
         String[] info = subscribeInfo.split("\\.");
         try {
-            Object o = Avatar.get().getSourceCache().get(source);
+            Object o = CacheCenter.getInstance().get(source);
             if (o == null) {
                 Log.e(TAG, "register is null");
                 Intent intent = new Intent();
