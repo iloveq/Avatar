@@ -1,4 +1,4 @@
-package com.woaiqw.avatar.thread;
+package com.woaiqw.avatar.annotation;
 
 
 /**

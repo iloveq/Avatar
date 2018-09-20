@@ -1,4 +1,4 @@
-package com.woaiqw.avatar.model;
+package com.woaiqw.avatar.bean;
 
 import java.util.List;
 

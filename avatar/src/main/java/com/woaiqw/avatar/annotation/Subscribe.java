@@ -1,7 +1,5 @@
 package com.woaiqw.avatar.annotation;
 
-import com.woaiqw.avatar.thread.ThreadMode;
-
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;

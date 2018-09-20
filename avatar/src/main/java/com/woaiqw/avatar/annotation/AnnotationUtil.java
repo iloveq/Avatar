@@ -1,7 +1,5 @@
 package com.woaiqw.avatar.annotation;
 
-import com.woaiqw.avatar.thread.ThreadMode;
-
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 
