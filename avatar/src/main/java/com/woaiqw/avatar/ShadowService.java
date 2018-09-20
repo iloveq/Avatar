@@ -6,6 +6,8 @@ import android.os.IBinder;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.woaiqw.avatar.helper.Shadow;
+
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashMap;

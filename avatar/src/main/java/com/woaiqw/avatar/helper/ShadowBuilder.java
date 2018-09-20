@@ -1,5 +1,5 @@
 
-package com.woaiqw.avatar;
+package com.woaiqw.avatar.helper;
 
 
 import android.os.Looper;

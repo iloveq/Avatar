@@ -5,7 +5,7 @@ import android.os.Looper;
 import android.os.Message;
 import android.os.SystemClock;
 
-import com.woaiqw.avatar.Shadow;
+import com.woaiqw.avatar.helper.Shadow;
 
 public class HandlerPoster extends Handler implements Poster {
 

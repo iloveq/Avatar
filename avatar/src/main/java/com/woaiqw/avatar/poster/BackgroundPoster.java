@@ -1,6 +1,6 @@
 package com.woaiqw.avatar.poster;
 
-import com.woaiqw.avatar.Shadow;
+import com.woaiqw.avatar.helper.Shadow;
 
 /**
  * Posts events in background.

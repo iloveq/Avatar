@@ -1,8 +1,10 @@
-package com.woaiqw.avatar;
+package com.woaiqw.avatar.helper;
 
 import android.content.Intent;
 import android.util.Log;
 
+import com.woaiqw.avatar.Avatar;
+import com.woaiqw.avatar.CacheCenter;
 import com.woaiqw.avatar.poster.AsyncPoster;
 import com.woaiqw.avatar.poster.BackgroundPoster;
 import com.woaiqw.avatar.poster.MainThreadSupport;
@@ -65,7 +67,7 @@ public class Shadow {
 
     }
 
-    void invokeSubscriber(String subscribeInfo, String source) {
+    public void invokeSubscriber(String subscribeInfo, String source) {
         String[] info = subscribeInfo.split("\\.");
         try {
             Object o = CacheCenter.getInstance().get(source);

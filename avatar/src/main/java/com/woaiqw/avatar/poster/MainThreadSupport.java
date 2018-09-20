@@ -2,7 +2,7 @@ package com.woaiqw.avatar.poster;
 
 import android.os.Looper;
 
-import com.woaiqw.avatar.Shadow;
+import com.woaiqw.avatar.helper.Shadow;
 
 /**
  * Interface to the "main" thread, which can be whatever you like. Typically on Android, Android's main thread is used.
