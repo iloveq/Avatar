@@ -6,13 +6,10 @@ import android.content.Context;
 import android.text.TextUtils;
 import android.util.Log;
 
-import com.woaiqw.avatar.log.Logger;
-
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.List;
-
 
 
 /**
@@ -23,6 +20,7 @@ public class ProcessUtil {
 
     private static final String TAG = "ProcessUtil";
     private static String sProcessName;
+    private String packageName;
 
     public static boolean isMainProcess(Context context) {
         String processName = getProcessName(context);
@@ -64,14 +62,14 @@ public class ProcessUtil {
             }
             return processName;
         } catch (Exception e) {
-            Log.e(TAG,"getProcessName read is fail. exception="+ e);
+            Log.e(TAG, "getProcessName read is fail. exception=" + e);
         } finally {
             try {
                 if (reader != null) {
                     reader.close();
                 }
             } catch (IOException e) {
-                Log.e(TAG,"getProcessName close is fail. exception=" + e);
+                Log.e(TAG, "getProcessName close is fail. exception=" + e);
             }
         }
         return null;
@@ -120,6 +118,10 @@ public class ProcessUtil {
     public static boolean isMainProcess(Application application) {
         String packageName = application.getPackageName();
         return packageName.equals(ProcessUtil.getCurrentProcessName(application));
+    }
+
+    public static boolean isChildProcess(String processName) {
+        return processName.contains(":");
     }
 
 }

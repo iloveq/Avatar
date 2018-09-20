@@ -3,13 +3,16 @@ package com.woaiqw.avatar.helper;
 import android.content.Intent;
 import android.util.Log;
 
+import com.google.gson.Gson;
 import com.woaiqw.avatar.Avatar;
 import com.woaiqw.avatar.CacheCenter;
+import com.woaiqw.avatar.bean.SubscribeInfo;
 import com.woaiqw.avatar.poster.AsyncPoster;
 import com.woaiqw.avatar.poster.BackgroundPoster;
 import com.woaiqw.avatar.poster.MainThreadSupport;
 import com.woaiqw.avatar.poster.PendingPost;
 import com.woaiqw.avatar.poster.Poster;
+import com.woaiqw.avatar.utils.ProcessUtil;
 
 import java.lang.reflect.Method;
 import java.util.concurrent.ExecutorService;
@@ -62,28 +65,27 @@ public class Shadow {
         String source = pendingPost.source;
         String subscribeInfo = pendingPost.subscribeInfo;
         PendingPost.releasePendingPost(pendingPost);
-
         invokeSubscriber(subscribeInfo, source);
 
     }
 
-    public void invokeSubscriber(String subscribeInfo, String source) {
-        String[] info = subscribeInfo.split("\\.");
+    public void invokeSubscriber(String subscribe, String source) {
+        SubscribeInfo info = new Gson().fromJson(subscribe, SubscribeInfo.class);
         try {
             Object o = CacheCenter.getInstance().get(source);
-            if (o == null) {
+            if (o == null && ProcessUtil.isChildProcess(info.process)) {
                 Log.e(TAG, "register is null");
                 Intent intent = new Intent();
                 intent.setAction("POST");
                 intent.putExtra("source", source);
-                intent.putExtra("info", subscribeInfo);
+                intent.putExtra("info", subscribe);
                 Avatar.appContext.sendBroadcast(intent);
                 return;
             }
             Log.e(TAG, o.toString());
-            Method method = o.getClass().getDeclaredMethod(info[0], String.class);
+            Method method = o.getClass().getDeclaredMethod(info.methodName, String.class);
             Log.e(TAG, "create method");
-            method.invoke(o, info[3]);
+            method.invoke(o, info.methodParam);
             Log.e(TAG, "method.invoke");
         } catch (Exception e) {
             Log.e(TAG, e.toString());

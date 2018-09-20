@@ -9,11 +9,14 @@ import android.os.RemoteException;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.google.gson.Gson;
+import com.woaiqw.avatar.bean.SubscribeInfo;
 import com.woaiqw.avatar.connect.Connection;
 import com.woaiqw.avatar.connect.ConnectionCallback;
 import com.woaiqw.avatar.utils.ProcessUtil;
 
 import java.lang.reflect.Method;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static com.woaiqw.avatar.annotation.AnnotationUtil.processorAnnotation;
@@ -35,7 +38,7 @@ public class Avatar {
             String source = intent.getStringExtra("source");
             String subscribeInfo = intent.getStringExtra("info");
             if (!TextUtils.isEmpty(source) && !TextUtils.isEmpty(subscribeInfo)) {
-                String[] info = subscribeInfo.split("\\.");
+                SubscribeInfo info = new Gson().fromJson(subscribeInfo, SubscribeInfo.class);
                 try {
                     Object o = CacheCenter.getInstance().getSubsciebesMap().get(source);
                     if (o == null) {
@@ -43,9 +46,9 @@ public class Avatar {
                         return;
                     }
                     Log.e("Shadow", o.toString());
-                    Method method = o.getClass().getDeclaredMethod(info[0], String.class);
+                    Method method = o.getClass().getDeclaredMethod(info.methodName, String.class);
                     Log.e("Shadow", "create method");
-                    method.invoke(o, info[3]);
+                    method.invoke(o, info.methodParam);
                     Log.e("Shadow", "method.invoke");
                 } catch (Exception e) {
                     Log.e("Shadow", e.toString());
@@ -121,13 +124,14 @@ public class Avatar {
         try {
             final String name = o.getClass().getName();
             CacheCenter.getInstance().cache(name, o);
-            String registerInfo = processorAnnotation(o);
-            Log.e("AVATAR:", registerInfo);
+            List<SubscribeInfo> info = processorAnnotation(o, ProcessUtil.getCurrentProcessName((Application) appContext));
+            String infoTrans = new Gson().toJson(info);
+            Log.e("AVATAR:", infoTrans);
             if (con == null) {
-                register(name, registerInfo);
+                register(name, infoTrans);
             } else {
                 if (con.getStub() != null) {
-                    con.getStub().register(name, registerInfo);
+                    con.getStub().register(name, infoTrans);
                 } else {
                     unregister(name);
                 }
