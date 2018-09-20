@@ -1,4 +1,4 @@
-package com.woaiqw.avatar;
+package com.woaiqw.avatar.poster;
 
 public final class PendingPostQueue {
     private PendingPost head;

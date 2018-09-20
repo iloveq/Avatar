@@ -1,4 +1,4 @@
-package com.woaiqw.avatar;
+package com.woaiqw.avatar.poster;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -6,8 +6,8 @@ import java.util.List;
 public final class PendingPost {
     private final static List<PendingPost> pendingPostPool = new ArrayList<>();
 
-    String source;
-    String subscribeInfo;
+    public String source;
+    public String subscribeInfo;
     PendingPost next;
 
     private PendingPost(String source, String subscribeInfo) {
@@ -29,7 +29,7 @@ public final class PendingPost {
         return new PendingPost(source, subscribeInfo);
     }
 
-    static void releasePendingPost(PendingPost pendingPost) {
+    public static void releasePendingPost(PendingPost pendingPost) {
         pendingPost.source = null;
         pendingPost.subscribeInfo = null;
         pendingPost.next = null;

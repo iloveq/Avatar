@@ -6,6 +6,7 @@ import android.util.Log;
 import com.woaiqw.avatar.poster.AsyncPoster;
 import com.woaiqw.avatar.poster.BackgroundPoster;
 import com.woaiqw.avatar.poster.MainThreadSupport;
+import com.woaiqw.avatar.poster.PendingPost;
 import com.woaiqw.avatar.poster.Poster;
 
 import java.lang.reflect.Method;

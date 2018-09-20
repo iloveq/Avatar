@@ -1,8 +1,6 @@
 package com.woaiqw.avatar.poster;
 
 
-import com.woaiqw.avatar.PendingPost;
-import com.woaiqw.avatar.PendingPostQueue;
 import com.woaiqw.avatar.Shadow;
 
 /**

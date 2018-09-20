@@ -5,8 +5,6 @@ import android.os.Looper;
 import android.os.Message;
 import android.os.SystemClock;
 
-import com.woaiqw.avatar.PendingPost;
-import com.woaiqw.avatar.PendingPostQueue;
 import com.woaiqw.avatar.Shadow;
 
 public class HandlerPoster extends Handler implements Poster {
